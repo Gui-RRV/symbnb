@@ -1,0 +1,75 @@
+{% extends 'base.html.twig'%}
+
+{% block title %}
+    {{ad.title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="AdTitre">
+            <h1>{{ad.title}}</h1>
+            <p>{{ad.introduction}}</p>
+            <p class="h2">
+                <strong>{{ad.rooms}} chambre(s) pour {{ad.price}} &euro; </strong> par nuit
+            </p>
+            <a href="#" class="btn btn-primary">Reserve moi ça !</a>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 mb-3">
+                {{ad.contenu | raw }}
+
+                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                    <ol class="carousel-indicators">
+                    {% for image in ad.images %}
+                        <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ loop.index0 }}" {% if loop.first %} class="active"  {% endif %}> </li>
+                    {% endfor %}
+                    </ol>
+                    <div class="carousel-inner">
+                        {% for image in ad.images %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <img src="{{ image.url }}" class="d-block w-100" alt="...">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>{{ ad.title }}</h5>   
+                                    <p>{{ image.caption }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="row">
+                    <div class="col-4">
+                        <img src="http://placehold.it/64x64" alt="Avatar User">
+                    </div>
+
+                    <div class="col">
+                        <h3>Jean Michel sniper</h3>
+                        <span class="badge badge-primary">
+                            Il a posté 3 annonces !
+                        </span>
+                    </div>
+                </div>
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla, consequatur!</p>
+                <p>Nulla non officia, vitae delectus quisquam earum sequi quidem. Fuga?</p>
+                <p>Fugiat saepe odio doloribus cupiditate voluptatem dolores aliquam ex sunt!</p>
+                <p>Id tenetur corrupti illum ut doloribus nesciunt voluptate iste atque?</p>
+            </div>
+            
+        </div>
+    </div>
+
+
+
+{% endblock %}
