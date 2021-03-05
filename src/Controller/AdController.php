@@ -12,7 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdController extends AbstractController
@@ -36,6 +38,7 @@ class AdController extends AbstractController
          * Permet de créer une fonction
          *
          * @Route("/ads/new" , name="ads_create")
+         * @IsGranted("ROLE_USER")
          * 
          * @return Response
          */
@@ -85,6 +88,7 @@ class AdController extends AbstractController
      * Permet d'éditer une annonce
      *
      * @Route("/ads/{slug}/edit", name="ads_edit")
+     * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()", message="cette annonce ne vous appartient pas, vous ne pouvez donc pas la modifier, désolé ")
      * 
      * @return Response
      */
@@ -135,6 +139,28 @@ class AdController extends AbstractController
         return $this->render('ad/show.html.twig', [
              'ad' => $ad
         ]);
+    }
+
+    /**
+     * Permet de supprimer une annonce
+     * 
+     * @Route ("/ads/{slug}/delete" , name="ads_delete")
+     * @Security("is_granted('ROLE_USER') and user == ad.getAuthor()", message="Oui mais vous n'avez pas le droit de d'accèder à cette information, désolé !")
+     *
+     * @param Ad $ad
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    public function delete(Ad $ad, EntityManagerInterface $manager){
+        $manager->remove($ad);
+        $manager->flush();
+
+        $this->addFlash(
+            'success',
+            "L'annnonce <strong>{$ad->getTitle()}</strong> a bien été supprimée !"
+        );
+
+        return $this->redirectToRoute("ads_index");
     }
 
 }
