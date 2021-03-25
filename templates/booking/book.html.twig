@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver l'annonce : {{ ad.title }} {% endblock %}
+
+{% block stylesheets %}
+{# Date picker css #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Reservez pour l'anonce : {{ad.title}} </h1>
+
+        <p>Vous êtes sur le point de réserver le bien de <strong>{{ ad.author.fullName }}
+        </strong>, dites nous tout on s'occupe du reste!</p>
+
+        {{ form_start(form) }}
+        <div class="alert alert-light">
+            <h2>Commencez par nous donnez les dates qui vous intéresse !</h2>
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.startDate)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.endDate)}}
+                </div>
+            </div>
+            <h4>Montant du séjour : <span id="amount">...</span> &euro;</h4>
+
+            <span id="days">0</span> nuit(s) à {{ad.price}} /nuit
+
+            <h4 class="mt-3"> Voux avez une envie particulière ? </h4>
+            {{form_row(form.comment)}}
+        </div>
+
+        <h2>Vous avez terminé !</h2>
+        
+        <button type="submit" class="btn btn-success">Je réserve !</button>
+        {{form_end(form)}}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#booking_startDate, #booking_endDate').datepicker({
+            format: 'dd/mm/yyyy',
+            datesDisabled: [
+                {% for day in ad.notAvailableDays %}
+                    "{{ day.format('d/m/Y')}}",
+                {% endfor %}
+            ],
+            startDate: new Date()
+        });
+
+        $('#booking_startDate, #booking_endDate').on('change',calculateAmount);
+
+    });
+
+    function calculateAmount(){
+        //la regex capture le 1er nombre puis le 2ème puis le troisième (qui est en 4 chiffres) puis change le sens pour correspondre
+        //a un format de date que JS comprend
+        const endDate = new Date($('#booking_endDate').val().replace(/(\d+)\/(\d+)\/(\d{4})/,'$3-$2-$1'));   
+        const startDate = new Date($('#booking_startDate').val().replace(/(\d+)\/(\d+)\/(\d{4})/,'$3-$2-$1'));   
+
+    
+
+        if(startDate && endDate && startDate < endDate){
+            
+            const interval = endDate.getTime() - startDate.getTime();
+            //Interval divisé par le nombre de millisecondes dans un jour
+            const days = interval / (24*60*60*1000);
+
+            const amount = days * {{ ad.price }} ;
+
+            $('#days').text(days);
+            $('#amount').text(amount.toLocaleString('fr-FR'));
+        }
+    }
+</script>
+
+{% endblock %}
