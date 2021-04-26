@@ -13,4 +13,13 @@ J'ai eu l'occasion aussi de découvrir l'ORM Doctrine et donc la gestion des ent
 Le projet est encore incomplet mais vous pouvez déjà y jeter un coup d'oeil.
 Lorsque ce projet sera completé je le déploierais en ligne en m'aidant d'Heroku.
 
+Pour l'heure, si vous souhaitez voir à quoi ressemble l'application en fonctionnement, récupérez les fichiers ensuite rendez-vous dans le projet avec l'invite de commande
+et pour récupérer toutes les dépendances éxécutez:
+php composer.phar install 
+puis
+php composer.phar update
+
+Ensuite configurez une base de données dans le fichier .env, et utiliser php/console doctrine:migrations:diff puis doctrine:migrations:migrate pour remplir la bdd
+faites enfin symfony server:start pour lancer le serveur local !
+
 Merci de votre visite !
